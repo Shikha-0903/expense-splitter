@@ -1,16 +1,9 @@
+import 'package:expense_splitter/src/core/router/routes.dart';
 import 'package:expense_splitter/src/core/theme/theme.dart';
-import 'package:expense_splitter/src/feature/home/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
-void main(){
-  runApp(
-      MaterialApp(
-        home: MyApp(),
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-      )
-  );
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,6 +11,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomePage();
+    return MaterialApp.router(
+      title: 'Expense Splitter',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      routerConfig: router,
+    );
   }
 }
