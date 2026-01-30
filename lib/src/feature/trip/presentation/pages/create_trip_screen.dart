@@ -1,3 +1,7 @@
+import 'package:expense_splitter/src/core/theme/theme.dart';
+import 'package:expense_splitter/src/core/widgets/animated_card.dart';
+import 'package:expense_splitter/src/core/widgets/animated_gradient_button.dart';
+import 'package:expense_splitter/src/core/widgets/contacts_picker_sheet.dart';
 import 'package:expense_splitter/src/feature/trip/presentation/cubit/trip_cubit.dart';
 import 'package:expense_splitter/src/feature/trip/data/repository/trip_repository.dart';
 import 'package:flutter/material.dart';
@@ -69,164 +73,413 @@ class _CreateTripViewState extends State<_CreateTripView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(title: const Text('Create New Trip')),
-      body: BlocConsumer<TripCubit, TripState>(
-        listener: (context, state) {
-          if (state is TripError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
-          } else if (state is TripCreated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Trip Created Successfully!')),
-            );
-            context.pop(); // Go back to homepage
-          }
-        },
-        builder: (context, state) {
-          final friends = context.read<TripCubit>().friends;
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: isDark
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [AppTheme.charcoalBlack, AppTheme.midnightBlue],
+                )
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.offWhite,
+                    AppTheme.softLavender.withAlpha(77),
+                  ],
+                ),
+        ),
+        child: SafeArea(
+          child: BlocConsumer<TripCubit, TripState>(
+            listener: (context, state) {
+              if (state is TripError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const Icon(Icons.error_outline, color: Colors.white),
+                        const SizedBox(width: 12),
+                        Expanded(child: Text(state.message)),
+                      ],
+                    ),
+                    backgroundColor: AppTheme.errorRed,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                );
+              } else if (state is TripCreated) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Row(
+                      children: [
+                        Icon(Icons.check_circle_outline, color: Colors.white),
+                        SizedBox(width: 12),
+                        Text('Trip Created Successfully!'),
+                      ],
+                    ),
+                    backgroundColor: AppTheme.successGreen,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                );
+                context.pop();
+              }
+            },
+            builder: (context, state) {
+              final friends = context.read<TripCubit>().friends;
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Trip Name',
-                      hintText: 'e.g. Goa Trip 2024',
-                      prefixIcon: Icon(Icons.flight_takeoff),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    initialValue: _selectedCurrency,
-                    decoration: const InputDecoration(
-                      labelText: 'Currency',
-                      prefixIcon: Icon(Icons.attach_money),
-                    ),
-                    items: _currencies
-                        .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                        .toList(),
-                    onChanged: (val) =>
-                        setState(() => _selectedCurrency = val!),
-                  ),
-                  const SizedBox(height: 16),
-                  InkWell(
-                    onTap: _selectDate,
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Trip Date',
-                        prefixIcon: Icon(Icons.calendar_today),
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Create New Trip',
+                        style: Theme.of(context).textTheme.displayMedium,
                       ),
-                      child: Text(
-                        _selectedDate != null
-                            ? _formatDate(_selectedDate!)
-                            : 'Select date',
-                        style: TextStyle(
-                          color: _selectedDate != null
-                              ? null
-                              : Colors.grey[600],
+                      const SizedBox(height: 8),
+                      Text(
+                        'Set up your trip and add friends',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Friends',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _friendController,
-                          decoration: const InputDecoration(
-                            hintText: 'Add friend name',
-                            isDense: true,
+                      const SizedBox(height: 32),
+                      // Trip Name
+                      TextField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          labelText: 'Trip Name',
+                          hintText: 'e.g. Goa Trip 2024',
+                          prefixIcon: Icon(
+                            Icons.flight_takeoff_rounded,
+                            color: AppTheme.premiumPurple,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      IconButton.filled(
-                        onPressed: () {
-                          context.read<TripCubit>().addFriend(
-                            _friendController.text,
-                          );
-                          _friendController.clear();
-                        },
-                        icon: const Icon(Icons.add),
+                      const SizedBox(height: 20),
+                      // Currency
+                      DropdownButtonFormField<String>(
+                        initialValue: _selectedCurrency,
+                        decoration: InputDecoration(
+                          labelText: 'Currency',
+                          prefixIcon: Icon(
+                            Icons.attach_money_rounded,
+                            color: AppTheme.premiumPurple,
+                          ),
+                        ),
+                        items: _currencies
+                            .map(
+                              (c) => DropdownMenuItem(value: c, child: Text(c)),
+                            )
+                            .toList(),
+                        onChanged: (val) =>
+                            setState(() => _selectedCurrency = val!),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 200,
-                    child: friends.isEmpty
-                        ? Center(
-                            child: Text(
-                              'No friends added yet',
-                              style: TextStyle(color: Colors.grey[600]),
+                      const SizedBox(height: 20),
+                      // Date Picker
+                      InkWell(
+                        onTap: _selectDate,
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 18,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? const Color(0xFF1E293B)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppTheme.lightLavender,
+                              width: 1.5,
                             ),
-                          )
-                        : ListView.builder(
-                            itemCount: friends.length,
-                            itemBuilder: (context, index) {
-                              final friend = friends[index];
-                              return Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Text(friend.name[0].toUpperCase()),
-                                  ),
-                                  title: Text(friend.name),
-                                  trailing: IconButton(
-                                    icon: const Icon(
-                                      Icons.remove_circle_outline,
-                                      color: Colors.red,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today_rounded,
+                                color: AppTheme.premiumPurple,
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Trip Date',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: isDark
+                                                ? Colors.grey[400]
+                                                : Colors.grey[600],
+                                          ),
                                     ),
-                                    onPressed: () => context
-                                        .read<TripCubit>()
-                                        .removeFriend(friend.id),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _selectedDate != null
+                                          ? _formatDate(_selectedDate!)
+                                          : 'Select date',
+                                      style: TextStyle(
+                                        color: _selectedDate != null
+                                            ? null
+                                            : Colors.grey[600],
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_drop_down_rounded,
+                                color: isDark
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      // Friends Section
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.people_rounded,
+                            color: AppTheme.premiumPurple,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Friends',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF1E293B)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: AppTheme.cardShadow,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _friendController,
+                                decoration: InputDecoration(
+                                  hintText: 'Add friend name',
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 16,
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                  ),
-                  const SizedBox(height: 16),
-                  FilledButton(
-                    onPressed: state is TripLoading
-                        ? null
-                        : () {
-                            context.read<TripCubit>().createTrip(
-                              _nameController.text,
-                              _selectedCurrency,
-                              _selectedDate,
-                            );
-                          },
-                    child: state is TripLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
+                                onSubmitted: (value) {
+                                  if (value.isNotEmpty) {
+                                    context.read<TripCubit>().addFriend(value);
+                                    _friendController.clear();
+                                  }
+                                },
+                              ),
                             ),
-                          )
-                        : const Text('Create Trip'),
+                            IconButton(
+                              tooltip: 'Pick from contacts',
+                              onPressed: () async {
+                                final name = await ContactsPickerSheet.pickName(
+                                  context,
+                                );
+                                if (name != null && name.trim().isNotEmpty) {
+                                  if (context.mounted) {
+                                    context.read<TripCubit>().addFriend(name);
+                                  }
+                                }
+                              },
+                              icon: Icon(
+                                Icons.contact_page_rounded,
+                                color: isDark
+                                    ? Colors.grey[300]
+                                    : Colors.grey[700],
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                gradient: AppTheme.primaryGradient,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  if (_friendController.text.isNotEmpty) {
+                                    context.read<TripCubit>().addFriend(
+                                      _friendController.text,
+                                    );
+                                    _friendController.clear();
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.add_rounded,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Friends List
+                      Container(
+                        constraints: const BoxConstraints(maxHeight: 250),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF1E293B)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: AppTheme.cardShadow,
+                        ),
+                        child: friends.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(32),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TweenAnimationBuilder<double>(
+                                        tween: Tween(begin: 0.0, end: 1.0),
+                                        duration: const Duration(
+                                          milliseconds: 800,
+                                        ),
+                                        curve: Curves.elasticOut,
+                                        builder: (context, value, child) {
+                                          return Transform.scale(
+                                            scale: value,
+                                            child: Icon(
+                                              Icons.person_add_outlined,
+                                              size: 48,
+                                              color: isDark
+                                                  ? Colors.grey[500]
+                                                  : Colors.grey[400],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'No friends added yet',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: isDark
+                                                  ? Colors.grey[400]
+                                                  : Colors.grey[600],
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                padding: const EdgeInsets.all(8),
+                                itemCount: friends.length,
+                                itemBuilder: (context, index) {
+                                  final friend = friends[index];
+                                  return AnimatedCard(
+                                    index: index,
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: isDark
+                                            ? AppTheme.midnightBlue
+                                            : AppTheme.softLavender,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: ListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 4,
+                                            ),
+                                        leading: Container(
+                                          width: 44,
+                                          height: 44,
+                                          decoration: BoxDecoration(
+                                            gradient: AppTheme.primaryGradient,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              friend.name[0].toUpperCase(),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          friend.name,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleMedium,
+                                        ),
+                                        trailing: IconButton(
+                                          icon: const Icon(
+                                            Icons.remove_circle_rounded,
+                                            color: AppTheme.errorRed,
+                                          ),
+                                          onPressed: () => context
+                                              .read<TripCubit>()
+                                              .removeFriend(friend.id),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+                      const SizedBox(height: 32),
+                      // Create Button
+                      AnimatedGradientButton(
+                        text: 'Create Trip',
+                        icon: Icons.flight_takeoff_rounded,
+                        onPressed: state is TripLoading
+                            ? null
+                            : () {
+                                context.read<TripCubit>().createTrip(
+                                  _nameController.text,
+                                  _selectedCurrency,
+                                  _selectedDate,
+                                );
+                              },
+                        isLoading: state is TripLoading,
+                      ),
+                      const SizedBox(height: 24),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          );
-        },
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
