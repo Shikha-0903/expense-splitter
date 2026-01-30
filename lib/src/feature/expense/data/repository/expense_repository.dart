@@ -16,4 +16,12 @@ class ExpenseRepository {
         .order('created_at', ascending: false);
     return (response as List).map((e) => ExpenseModel.fromJson(e)).toList();
   }
+
+  Future<List<ExpenseModel>> getAllExpenses() async {
+    final response = await _client
+        .from('expenses')
+        .select()
+        .order('created_at', ascending: false);
+    return (response as List).map((e) => ExpenseModel.fromJson(e)).toList();
+  }
 }
