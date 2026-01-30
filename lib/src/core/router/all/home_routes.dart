@@ -1,3 +1,4 @@
+// Legacy route holder (kept for compatibility; app now uses /app/* shell routes).
 import 'package:expense_splitter/src/feature/home/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
