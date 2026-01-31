@@ -1,28 +1,28 @@
 import 'package:expense_splitter/src/core/theme/theme.dart';
 import 'package:expense_splitter/src/core/widgets/animated_card.dart';
 import 'package:expense_splitter/src/core/widgets/animated_gradient_button.dart';
-import 'package:expense_splitter/src/feature/expense/data/model/expense_model.dart';
-import 'package:expense_splitter/src/feature/expense/data/repository/expense_repository.dart';
+import 'package:expense_splitter/src/feature/splitter/data/model/splitter_expense_model.dart';
+import 'package:expense_splitter/src/feature/splitter/data/repository/splitter_expense_repository.dart';
 import 'package:expense_splitter/src/feature/trip/data/model/friend_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
-class BulkExpenseScreen extends StatefulWidget {
+class CreateSplitterExpenseScreen extends StatefulWidget {
   final String tripId;
   final List<FriendModel> friends;
 
-  const BulkExpenseScreen({
+  const CreateSplitterExpenseScreen({
     super.key,
     required this.tripId,
     required this.friends,
   });
 
   @override
-  State<BulkExpenseScreen> createState() => _BulkExpenseScreenState();
+  State<CreateSplitterExpenseScreen> createState() => _CreateSplitterExpenseScreenState();
 }
 
-class _BulkExpenseScreenState extends State<BulkExpenseScreen> {
+class _CreateSplitterExpenseScreenState extends State<CreateSplitterExpenseScreen> {
   final _descriptionController = TextEditingController();
   final Map<String, TextEditingController> _amountControllers = {};
   bool _isLoading = false;
@@ -66,14 +66,14 @@ class _BulkExpenseScreenState extends State<BulkExpenseScreen> {
     }
 
     // Collect all non-empty amounts
-    final expenses = <ExpenseModel>[];
+    final expenses = <SplitterExpenseModel>[];
     for (var friend in widget.friends) {
       final amountText = _amountControllers[friend.id]!.text.trim();
       if (amountText.isNotEmpty) {
         final amount = double.tryParse(amountText);
         if (amount != null && amount > 0) {
           expenses.add(
-            ExpenseModel(
+            SplitterExpenseModel(
               id: const Uuid().v4(),
               tripId: widget.tripId,
               description: _descriptionController.text,
@@ -108,7 +108,7 @@ class _BulkExpenseScreenState extends State<BulkExpenseScreen> {
 
     setState(() => _isLoading = true);
     try {
-      final repo = ExpenseRepository();
+      final repo = SplitterExpenseRepository();
       for (var expense in expenses) {
         await repo.addExpense(expense);
       }
