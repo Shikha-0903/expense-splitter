@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This Privacy Policy explains how we collect, use, and protect your information when you use our application (“the App”). By using the App, you agree to the practices described in this policy.
+This Privacy Policy explains how we collect, use, and protect your information when you use our application **Expense Splitter**. By using the App, you agree to the practices described in this policy.
 
 ## Information We Collect
 
