@@ -16,3 +16,5 @@ class SupabaseClientManager {
 
   SupabaseClient get client => Supabase.instance.client;
 }
+
+SupabaseClient get supabase => Supabase.instance.client;

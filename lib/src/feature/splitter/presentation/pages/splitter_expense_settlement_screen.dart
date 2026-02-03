@@ -8,21 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
-class CreateSplitterExpenseScreen extends StatefulWidget {
+class SplitterExpenseSettlementScreen extends StatefulWidget {
   final String tripId;
   final List<FriendModel> friends;
 
-  const CreateSplitterExpenseScreen({
+  const SplitterExpenseSettlementScreen({
     super.key,
     required this.tripId,
     required this.friends,
   });
 
   @override
-  State<CreateSplitterExpenseScreen> createState() => _CreateSplitterExpenseScreenState();
+  State<SplitterExpenseSettlementScreen> createState() =>
+      _SplitterExpenseSettlementScreenState();
 }
 
-class _CreateSplitterExpenseScreenState extends State<CreateSplitterExpenseScreen> {
+class _SplitterExpenseSettlementScreenState
+    extends State<SplitterExpenseSettlementScreen> {
   final _descriptionController = TextEditingController();
   final Map<String, TextEditingController> _amountControllers = {};
   bool _isLoading = false;

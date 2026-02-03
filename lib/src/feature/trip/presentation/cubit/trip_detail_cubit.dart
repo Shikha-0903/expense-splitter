@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:expense_splitter/src/feature/expense/data/model/expense_model.dart';
-import 'package:expense_splitter/src/feature/expense/data/repository/expense_repository.dart';
+import 'package:expense_splitter/src/feature/splitter/data/model/splitter_expense_model.dart';
+import 'package:expense_splitter/src/feature/splitter/data/repository/splitter_expense_repository.dart';
 import 'package:expense_splitter/src/feature/trip/data/model/friend_model.dart';
 import 'package:expense_splitter/src/feature/trip/data/model/trip_model.dart';
 import 'package:expense_splitter/src/feature/trip/data/repository/trip_repository.dart';
@@ -10,12 +10,12 @@ part 'trip_detail_state.dart';
 
 class TripDetailCubit extends Cubit<TripDetailState> {
   final TripRepository _tripRepository;
-  final ExpenseRepository _expenseRepository;
+  final SplitterExpenseRepository _expenseRepository;
   final String tripId;
 
   TripDetailCubit({
     required TripRepository tripRepository,
-    required ExpenseRepository expenseRepository,
+    required SplitterExpenseRepository expenseRepository,
     required this.tripId,
   }) : _tripRepository = tripRepository,
        _expenseRepository = expenseRepository,
@@ -61,7 +61,7 @@ class TripDetailCubit extends Cubit<TripDetailState> {
 
   List<String> _calculateSettlements(
     List<FriendModel> friends,
-    List<ExpenseModel> expenses,
+    List<SplitterExpenseModel> expenses,
   ) {
     if (friends.isEmpty || expenses.isEmpty) return [];
 

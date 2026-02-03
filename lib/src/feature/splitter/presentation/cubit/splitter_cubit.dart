@@ -3,15 +3,15 @@ import 'package:expense_splitter/src/feature/trip/data/model/trip_model.dart';
 import 'package:expense_splitter/src/feature/trip/data/repository/trip_repository.dart';
 import 'package:flutter/foundation.dart';
 
-part 'home_state.dart';
+part 'splitter_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
+class SplitterCubit extends Cubit<SplitterState> {
   final TripRepository _repository;
 
-  HomeCubit(this._repository) : super(HomeInitial());
+  SplitterCubit(this._repository) : super(SplitterInitial());
 
   Future<void> fetchTrips() async {
-    emit(HomeLoading());
+    emit(SplitterLoading());
     try {
       final trips = await _repository.getTrips();
 
@@ -26,9 +26,9 @@ class HomeCubit extends Cubit<HomeState> {
         expenseTotals[trip.id] = total;
       }
 
-      emit(HomeLoaded(trips, expenseTotals));
+      emit(SplitterLoaded(trips, expenseTotals));
     } catch (e) {
-      emit(HomeError(e.toString()));
+      emit(SplitterError(e.toString()));
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:expense_splitter/src/core/supabase/supabase_client.dart';
 import 'package:expense_splitter/src/feature/trip/data/model/trip_model.dart';
 import 'package:expense_splitter/src/feature/trip/data/model/friend_model.dart';
-import 'package:expense_splitter/src/feature/expense/data/model/expense_model.dart';
+import 'package:expense_splitter/src/feature/splitter/data/model/splitter_expense_model.dart';
 
 class TripRepository {
   final _client = SupabaseClientManager().client;
@@ -41,11 +41,13 @@ class TripRepository {
     return (response as List).map((e) => FriendModel.fromJson(e)).toList();
   }
 
-  Future<List<ExpenseModel>> getExpenses(String tripId) async {
+  Future<List<SplitterExpenseModel>> getExpenses(String tripId) async {
     final response = await _client
         .from('expenses')
         .select()
         .eq('trip_id', tripId);
-    return (response as List).map((e) => ExpenseModel.fromJson(e)).toList();
+    return (response as List)
+        .map((e) => SplitterExpenseModel.fromJson(e))
+        .toList();
   }
 }

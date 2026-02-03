@@ -1,19 +1,19 @@
-part of 'home_cubit.dart';
+part of 'splitter_cubit.dart';
 
 @immutable
-abstract class HomeState {}
+abstract class SplitterState {}
 
-class HomeInitial extends HomeState {}
+class SplitterInitial extends SplitterState {}
 
-class HomeLoading extends HomeState {}
+class SplitterLoading extends SplitterState {}
 
-class HomeLoaded extends HomeState {
+class SplitterLoaded extends SplitterState {
   final List<TripModel> trips;
   final Map<String, double> expenseTotals; // tripId -> total expenses
-  HomeLoaded(this.trips, this.expenseTotals);
+  SplitterLoaded(this.trips, this.expenseTotals);
 }
 
-class HomeError extends HomeState {
+class SplitterError extends SplitterState {
   final String message;
-  HomeError(this.message);
+  SplitterError(this.message);
 }

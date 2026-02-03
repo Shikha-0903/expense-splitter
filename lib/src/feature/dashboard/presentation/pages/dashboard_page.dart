@@ -1,9 +1,12 @@
 import 'package:expense_splitter/src/core/theme/theme.dart';
 import 'package:expense_splitter/src/core/widgets/shimmer_loading.dart';
-import 'package:expense_splitter/src/feature/expense/data/model/expense_model.dart';
-import 'package:expense_splitter/src/feature/expense/data/repository/expense_repository.dart';
+import 'package:expense_splitter/src/feature/splitter/data/model/splitter_expense_model.dart';
+import 'package:expense_splitter/src/feature/splitter/data/repository/splitter_expense_repository.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:expense_splitter/src/feature/auth/presentation/bloc/auth_bloc.dart';
+import 'package:expense_splitter/src/feature/auth/presentation/bloc/auth_event.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -13,11 +16,11 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final _repo = ExpenseRepository();
+  final _repo = SplitterExpenseRepository();
 
   bool _loading = true;
   String? _error;
-  List<ExpenseModel> _expenses = const [];
+  List<SplitterExpenseModel> _expenses = const [];
 
   @override
   void initState() {
@@ -46,11 +49,61 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  void _showLogoutConfirmation(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                context.read<AuthBloc>().add(AuthSignOutRequested());
+              },
+              child: const Text(
+                'Logout',
+                style: TextStyle(color: AppTheme.errorRed),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: IconButton(
+              icon: const Icon(Icons.logout_rounded),
+              color: isDark ? Colors.white : AppTheme.midnightBlue,
+              tooltip: 'Logout',
+              onPressed: () {
+                _showLogoutConfirmation(context);
+              },
+            ),
+          ),
+        ],
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: isDark
@@ -125,7 +178,7 @@ class _DashboardPageState extends State<DashboardPage> {
 }
 
 class _DailyChart extends StatelessWidget {
-  final List<ExpenseModel> expenses;
+  final List<SplitterExpenseModel> expenses;
   const _DailyChart({required this.expenses});
 
   DateTime _dayKey(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
@@ -258,7 +311,7 @@ class _DailyChart extends StatelessWidget {
 }
 
 class _MonthlyChart extends StatelessWidget {
-  final List<ExpenseModel> expenses;
+  final List<SplitterExpenseModel> expenses;
   const _MonthlyChart({required this.expenses});
 
   DateTime _monthKey(DateTime dt) => DateTime(dt.year, dt.month);

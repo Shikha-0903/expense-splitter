@@ -3,13 +3,15 @@ import 'package:expense_splitter/src/feature/trip/presentation/pages/trip_detail
 import 'package:go_router/go_router.dart';
 
 class TripRoutes {
+  static const createTrip = '/create-trip';
+  static const tripDetail = '/trip/:id';
   static final routes = [
     GoRoute(
-      path: '/create-trip',
+      path: createTrip,
       builder: (context, state) => const CreateTripScreen(),
     ),
     GoRoute(
-      path: '/trip/:id',
+      path: tripDetail,
       builder: (context, state) {
         final id = state.pathParameters['id']!;
         return TripDetailScreen(tripId: id);

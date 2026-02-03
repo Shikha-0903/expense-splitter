@@ -1,28 +1,23 @@
+import 'package:expense_splitter/src/core/router/all/auth_routes.dart';
+import 'package:expense_splitter/src/core/router/all/home_routes.dart';
 import 'package:expense_splitter/src/core/router/all/trip_routes.dart';
-import 'package:expense_splitter/src/feature/dashboard/presentation/pages/dashboard_page.dart';
-import 'package:expense_splitter/src/feature/home/presentation/pages/home_page.dart';
+import 'package:expense_splitter/src/core/widgets/auth_gate.dart';
 import 'package:expense_splitter/src/feature/shell/presentation/pages/main_shell.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/app/home',
+  initialLocation: AuthRoutes.loginPage,
+  redirect: (context, state) {
+    // The AuthGate will handle the actual redirects based on auth state
+    return null;
+  },
   routes: [
-    // Backwards-compatible redirects (older builds / deep links)
-    GoRoute(path: '/', redirect: (context, state) => '/app/home'),
-    GoRoute(path: '/home-page', redirect: (context, state) => '/app/search'),
-    ShellRoute(
-      builder: (context, state, child) => MainShell(child: child),
-      routes: [
-        GoRoute(
-          path: '/app/home',
-          builder: (context, state) => const DashboardPage(),
-        ),
-        GoRoute(
-          path: '/app/search',
-          builder: (context, state) => const HomePage(),
-        ),
-      ],
-    ),
+    ...AuthRoutes.routes,
     ...TripRoutes.routes,
+    ShellRoute(
+      builder: (context, state, child) =>
+          AuthGate(child: MainShell(child: child)),
+      routes: HomeRoutes.routes,
+    ),
   ],
 );
