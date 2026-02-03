@@ -1,3 +1,4 @@
+import 'package:expense_splitter/src/core/router/all/home_routes.dart';
 import 'package:expense_splitter/src/core/theme/theme.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -9,8 +10,10 @@ class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.child});
 
   int _locationToIndex(String location) {
-    if (location.startsWith('/app/search')) return 1;
-    return 0; // /app/home default
+    if (location.startsWith(HomeRoutes.selfPage)) return 3;
+    if (location.startsWith(HomeRoutes.splitterPage)) return 2;
+    if (location.startsWith(HomeRoutes.familiaPage)) return 1;
+    return 0; // /app/splitter default
   }
 
   void _onTap(BuildContext context, int index) {
@@ -19,11 +22,16 @@ class MainShell extends StatelessWidget {
 
     switch (index) {
       case 0:
-        context.go('/app/home');
+        context.go(HomeRoutes.dashBoardPage);
         break;
       case 1:
-        context.go('/app/search');
+        context.go(HomeRoutes.familiaPage);
         break;
+      case 2:
+        context.go(HomeRoutes.splitterPage);
+        break;
+      case 3:
+        context.go(HomeRoutes.selfPage);
     }
   }
 
@@ -143,12 +151,16 @@ class _FancyBottomNavState extends State<_FancyBottomNav>
     return LayoutBuilder(
       builder: (context, constraints) {
         final w = constraints.maxWidth;
-        final itemW = w / 2;
+        final itemW = w / 4;
         final targetCenterX = (widget.currentIndex + 0.5) * itemW;
 
         IconData activeIcon = widget.currentIndex == 0
             ? Icons.home_rounded
-            : Icons.search_rounded;
+            : widget.currentIndex == 1
+            ? Icons.family_restroom
+            : widget.currentIndex == 2
+            ? Icons.splitscreen
+            : Icons.person;
 
         return TweenAnimationBuilder<double>(
           tween: Tween<double>(begin: targetCenterX, end: targetCenterX),
@@ -203,10 +215,28 @@ class _FancyBottomNavState extends State<_FancyBottomNav>
                         Expanded(
                           child: _PillNavItem(
                             active: widget.currentIndex == 1,
-                            icon: Icons.search_rounded,
-                            label: 'Search',
+                            icon: Icons.family_restroom,
+                            label: 'familia',
                             inactiveColor: inactive,
                             onTap: () => widget.onTap(1),
+                          ),
+                        ),
+                        Expanded(
+                          child: _PillNavItem(
+                            active: widget.currentIndex == 2,
+                            icon: Icons.splitscreen,
+                            label: 'splitter',
+                            inactiveColor: inactive,
+                            onTap: () => widget.onTap(2),
+                          ),
+                        ),
+                        Expanded(
+                          child: _PillNavItem(
+                            active: widget.currentIndex == 3,
+                            icon: Icons.person,
+                            label: 'Self',
+                            inactiveColor: inactive,
+                            onTap: () => widget.onTap(3),
                           ),
                         ),
                       ],
@@ -216,7 +246,7 @@ class _FancyBottomNavState extends State<_FancyBottomNav>
                   // Active bubble with enhanced animation
                   Positioned(
                     left: bubbleLeft,
-                    bottom: barHeight - bubbleSize / 2 - 12,
+                    bottom: barHeight - bubbleSize / 4 - 12,
                     child: AnimatedBuilder(
                       animation: _bubbleScale,
                       builder: (context, child) {

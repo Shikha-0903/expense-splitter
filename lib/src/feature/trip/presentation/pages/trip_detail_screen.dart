@@ -2,11 +2,11 @@ import 'package:expense_splitter/src/core/theme/theme.dart';
 import 'package:expense_splitter/src/core/widgets/animated_card.dart';
 import 'package:expense_splitter/src/core/widgets/animated_icon_button.dart';
 import 'package:expense_splitter/src/core/widgets/pull_to_refresh_wrapper.dart';
-import 'package:expense_splitter/src/feature/expense/presentation/pages/bulk_expense_screen.dart';
+import 'package:expense_splitter/src/feature/splitter/presentation/pages/splitter_expense_settlement_screen.dart';
 import 'package:expense_splitter/src/feature/trip/presentation/cubit/trip_detail_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:expense_splitter/src/feature/expense/data/repository/expense_repository.dart';
+import 'package:expense_splitter/src/feature/splitter/data/repository/splitter_expense_repository.dart';
 import 'package:expense_splitter/src/feature/trip/data/repository/trip_repository.dart';
 
 class TripDetailScreen extends StatelessWidget {
@@ -19,7 +19,7 @@ class TripDetailScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => TripDetailCubit(
         tripRepository: TripRepository(),
-        expenseRepository: ExpenseRepository(),
+        expenseRepository: SplitterExpenseRepository(),
         tripId: tripId,
       )..loadDetails(),
       child: const _TripDetailView(),
@@ -221,7 +221,7 @@ class _TripDetailView extends StatelessWidget {
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => BulkExpenseScreen(
+                      builder: (_) => SplitterExpenseSettlementScreen(
                         tripId: state.trip.id,
                         friends: state.friends,
                       ),

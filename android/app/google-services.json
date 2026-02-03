@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "982833143438",
+    "project_id": "shikha-b2fb0",
+    "storage_bucket": "shikha-b2fb0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982833143438:android:a5d9ed9bc62295b673b3df",
+        "android_client_info": {
+          "package_name": "com.shikha.expense_splitter.expense_splitter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARpEV0KRHZXlk4_9L0m_AJMC8ChYNn9o0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

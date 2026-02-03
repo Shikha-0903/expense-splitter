@@ -10,7 +10,7 @@ class TripDetailLoading extends TripDetailState {}
 class TripDetailLoaded extends TripDetailState {
   final TripModel trip;
   final List<FriendModel> friends;
-  final List<ExpenseModel> expenses;
+  final List<SplitterExpenseModel> expenses;
   final List<String> settlements;
   final double totalExpenses;
   final double fairShare;

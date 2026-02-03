@@ -1,28 +1,29 @@
+import 'package:expense_splitter/src/core/router/all/trip_routes.dart';
 import 'package:expense_splitter/src/core/theme/theme.dart';
 import 'package:expense_splitter/src/core/widgets/animated_card.dart';
 import 'package:expense_splitter/src/core/widgets/animated_icon_button.dart';
 import 'package:expense_splitter/src/core/widgets/pull_to_refresh_wrapper.dart';
 import 'package:expense_splitter/src/core/widgets/shimmer_loading.dart';
-import 'package:expense_splitter/src/feature/home/presentation/cubit/home_cubit.dart';
+import 'package:expense_splitter/src/feature/splitter/presentation/cubit/splitter_cubit.dart';
 import 'package:expense_splitter/src/feature/trip/data/repository/trip_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class SplitterPage extends StatefulWidget {
+  const SplitterPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<SplitterPage> createState() => _SplitterPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  late final HomeCubit _cubit;
+class _SplitterPageState extends State<SplitterPage> {
+  late final SplitterCubit _cubit;
 
   @override
   void initState() {
     super.initState();
-    _cubit = HomeCubit(TripRepository())..fetchTrips();
+    _cubit = SplitterCubit(TripRepository())..fetchTrips();
   }
 
   @override
@@ -94,9 +95,9 @@ class _HomeViewState extends State<_HomeView> {
                 ),
         ),
         child: SafeArea(
-          child: BlocBuilder<HomeCubit, HomeState>(
+          child: BlocBuilder<SplitterCubit, SplitterState>(
             builder: (context, state) {
-              if (state is HomeLoading) {
+              if (state is SplitterLoading) {
                 return Column(
                   children: [
                     Padding(
@@ -138,7 +139,7 @@ class _HomeViewState extends State<_HomeView> {
                     ),
                   ],
                 );
-              } else if (state is HomeError) {
+              } else if (state is SplitterError) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -156,7 +157,7 @@ class _HomeViewState extends State<_HomeView> {
                     ],
                   ),
                 );
-              } else if (state is HomeLoaded) {
+              } else if (state is SplitterLoaded) {
                 final filteredTrips = state.trips.where((trip) {
                   return trip.name.toLowerCase().contains(
                     _searchQuery.toLowerCase(),
@@ -243,7 +244,7 @@ class _HomeViewState extends State<_HomeView> {
                     Expanded(
                       child: PullToRefreshWrapper(
                         onRefresh: () async {
-                          context.read<HomeCubit>().fetchTrips();
+                          context.read<SplitterCubit>().fetchTrips();
                           await Future.delayed(
                             const Duration(milliseconds: 500),
                           );
@@ -316,7 +317,9 @@ class _HomeViewState extends State<_HomeView> {
                                     onTap: () async {
                                       await context.push('/trip/${trip.id}');
                                       if (context.mounted) {
-                                        context.read<HomeCubit>().fetchTrips();
+                                        context
+                                            .read<SplitterCubit>()
+                                            .fetchTrips();
                                       }
                                     },
                                     child: Container(
@@ -464,9 +467,9 @@ class _HomeViewState extends State<_HomeView> {
         child: AnimatedIconButton(
           icon: Icons.add_rounded,
           onPressed: () async {
-            await context.push('/create-trip');
+            await context.push(TripRoutes.createTrip);
             if (context.mounted) {
-              context.read<HomeCubit>().fetchTrips();
+              context.read<SplitterCubit>().fetchTrips();
             }
           },
           tooltip: 'Create New Trip',

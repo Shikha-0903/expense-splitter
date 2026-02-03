@@ -1,4 +1,4 @@
-class ExpenseModel {
+class SplitterExpenseModel {
   final String id;
   final String tripId;
   final String description;
@@ -6,7 +6,7 @@ class ExpenseModel {
   final String paidByUserId;
   final DateTime createdAt;
 
-  ExpenseModel({
+  SplitterExpenseModel({
     required this.id,
     required this.tripId,
     required this.description,
@@ -15,8 +15,8 @@ class ExpenseModel {
     required this.createdAt,
   });
 
-  factory ExpenseModel.fromJson(Map<String, dynamic> json) {
-    return ExpenseModel(
+  factory SplitterExpenseModel.fromJson(Map<String, dynamic> json) {
+    return SplitterExpenseModel(
       id: json['id'] as String,
       tripId: json['trip_id'] as String,
       description: json['description'] as String,
