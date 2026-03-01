@@ -24,6 +24,7 @@ class TripRepository {
     final response = await _client
         .from('trips')
         .select()
+        .eq('user_id', _client.auth.currentUser?.id ?? '')
         .order('created_at', ascending: false);
     return (response as List).map((e) => TripModel.fromJson(e)).toList();
   }
@@ -41,11 +42,26 @@ class TripRepository {
     return (response as List).map((e) => FriendModel.fromJson(e)).toList();
   }
 
+  Future<void> addExpense(SplitterExpenseModel expense) async {
+    await _client.from('expenses').insert(expense.toJson());
+  }
+
   Future<List<SplitterExpenseModel>> getExpenses(String tripId) async {
     final response = await _client
         .from('expenses')
         .select()
         .eq('trip_id', tripId);
+    return (response as List)
+        .map((e) => SplitterExpenseModel.fromJson(e))
+        .toList();
+  }
+
+  Future<List<SplitterExpenseModel>> getAllExpenses() async {
+    final response = await _client
+        .from('expenses')
+        .select()
+        .eq('paid_by', _client.auth.currentUser!.id)
+        .order('created_at', ascending: false);
     return (response as List)
         .map((e) => SplitterExpenseModel.fromJson(e))
         .toList();

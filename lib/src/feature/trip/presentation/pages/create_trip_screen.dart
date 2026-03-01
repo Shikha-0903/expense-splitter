@@ -14,7 +14,7 @@ class CreateTripScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TripCubit(TripRepository()),
+      create: (context) => TripCubit(TripRepository())..initCreator(),
       child: const _CreateTripView(),
     );
   }
@@ -147,7 +147,7 @@ class _CreateTripViewState extends State<_CreateTripView> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Set up your trip and add friends',
+                        'Set up your trip (You\'ll be added automatically)',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),

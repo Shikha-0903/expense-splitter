@@ -2,8 +2,8 @@ import 'package:expense_splitter/src/core/theme/theme.dart';
 import 'package:expense_splitter/src/core/widgets/animated_card.dart';
 import 'package:expense_splitter/src/core/widgets/animated_gradient_button.dart';
 import 'package:expense_splitter/src/feature/splitter/data/model/splitter_expense_model.dart';
-import 'package:expense_splitter/src/feature/splitter/data/repository/splitter_expense_repository.dart';
 import 'package:expense_splitter/src/feature/trip/data/model/friend_model.dart';
+import 'package:expense_splitter/src/feature/trip/data/repository/trip_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
@@ -110,7 +110,7 @@ class _SplitterExpenseSettlementScreenState
 
     setState(() => _isLoading = true);
     try {
-      final repo = SplitterExpenseRepository();
+      final repo = TripRepository();
       for (var expense in expenses) {
         await repo.addExpense(expense);
       }

@@ -23,6 +23,7 @@ class SplitterExpenseRepository {
     final response = await _client
         .from('expenses')
         .select()
+        .eq('paid_by', _client.auth.currentUser!.id)
         .order('created_at', ascending: false);
     return (response as List)
         .map((e) => SplitterExpenseModel.fromJson(e))
