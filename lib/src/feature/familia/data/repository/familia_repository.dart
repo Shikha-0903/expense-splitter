@@ -1,4 +1,5 @@
 import 'package:expense_splitter/src/core/supabase/supabase_client.dart';
+import 'package:expense_splitter/src/feature/familia/data/model/family_expense_model.dart';
 import 'package:expense_splitter/src/feature/familia/data/model/family_member_model.dart';
 import 'package:expense_splitter/src/feature/familia/data/model/family_model.dart';
 import 'package:expense_splitter/src/feature/familia/data/model/profile_model.dart';
@@ -6,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FamiliaRepository {
   final SupabaseClient _client = SupabaseClientManager().client;
+
+  String? get authUserId => _client.auth.currentUser?.id;
 
   Future<List<ProfileModel>> searchUsers(String query) async {
     if (query.isEmpty) return [];
@@ -53,6 +56,22 @@ class FamiliaRepository {
           .map((json) => FamilyMemberModel.fromJson(json))
           .toList(),
     };
+  }
+
+  Future<List<FamilyExpenseModel>> fetchFamilyExpenses(String familyId) async {
+    final response = await _client
+        .from('family_expenses')
+        .select()
+        .eq('family_id', familyId)
+        .order('expense_date', ascending: false);
+
+    return (response as List)
+        .map((json) => FamilyExpenseModel.fromJson(json))
+        .toList();
+  }
+
+  Future<void> addFamilyExpense(FamilyExpenseModel expense) async {
+    await _client.from('family_expenses').insert(expense.toJson());
   }
 
   Future<String> createFamily(String name) async {

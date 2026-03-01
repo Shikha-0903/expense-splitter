@@ -303,8 +303,11 @@ class _HomeViewState extends State<_HomeView> {
                                 ),
                               )
                             : ListView.builder(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
+                                padding: const EdgeInsets.fromLTRB(
+                                  24,
+                                  0,
+                                  24,
+                                  100,
                                 ),
                                 itemCount: filteredTrips.length,
                                 itemBuilder: (context, index) {
