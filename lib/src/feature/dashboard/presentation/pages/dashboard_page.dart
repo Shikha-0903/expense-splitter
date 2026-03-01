@@ -127,7 +127,7 @@ class _DashboardPageState extends State<DashboardPage> {
             color: AppTheme.premiumPurple,
             backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 100),
               children: [
                 Text(
                   'Overview',
