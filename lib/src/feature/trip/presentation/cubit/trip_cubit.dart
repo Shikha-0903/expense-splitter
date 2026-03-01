@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:expense_splitter/src/core/supabase/supabase_client.dart';
 import 'package:expense_splitter/src/feature/trip/data/model/friend_model.dart';
 import 'package:expense_splitter/src/feature/trip/data/model/trip_model.dart';
 import 'package:expense_splitter/src/feature/trip/data/repository/trip_repository.dart';
@@ -15,6 +16,22 @@ class TripCubit extends Cubit<TripState> {
   final List<FriendModel> _friends = [];
 
   List<FriendModel> get friends => List.unmodifiable(_friends);
+
+  void initCreator() {
+    final user = SupabaseClientManager().client.auth.currentUser;
+    if (user != null) {
+      final creatorName =
+          user.userMetadata?['full_name'] as String? ??
+          user.userMetadata?['name'] as String? ??
+          user.email?.split('@')[0] ??
+          "Me";
+
+      if (!_friends.any((f) => f.name == creatorName)) {
+        _friends.add(FriendModel(id: user.id, name: creatorName, tripId: ''));
+        emit(TripFriendsUpdated(List.from(_friends)));
+      }
+    }
+  }
 
   void addFriend(String name) {
     if (name.trim().isEmpty) return;
@@ -48,10 +65,17 @@ class TripCubit extends Cubit<TripState> {
 
     emit(TripLoading());
     try {
+      final user = SupabaseClientManager().client.auth.currentUser;
+      if (user == null) {
+        emit(TripError("User not logged in"));
+        return;
+      }
+
       final tripId = const Uuid().v4();
       final trip = TripModel(
         id: tripId,
         name: name,
+        userId: user.id,
         currency: currency,
         createdAt: DateTime.now(),
         tripDate: tripDate,

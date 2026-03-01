@@ -1,7 +1,7 @@
 import 'package:expense_splitter/src/core/theme/theme.dart';
 import 'package:expense_splitter/src/core/widgets/shimmer_loading.dart';
 import 'package:expense_splitter/src/feature/splitter/data/model/splitter_expense_model.dart';
-import 'package:expense_splitter/src/feature/splitter/data/repository/splitter_expense_repository.dart';
+import 'package:expense_splitter/src/feature/trip/data/repository/trip_repository.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +16,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final _repo = SplitterExpenseRepository();
+  final _repo = TripRepository();
 
   bool _loading = true;
   String? _error;
